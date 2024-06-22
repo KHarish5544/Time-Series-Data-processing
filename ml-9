@@ -1,0 +1,41 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.stattools import adfuller
+# Load time series data
+data = pd.read_csv('TimeGender.csv', index_col=0, parse_dates=True)
+# Plot the time series data
+plt.figure(figsize=(10, 6))
+plt.plot(data.index, data[data.columns[0]])
+plt.title('Time Series Data')
+plt.xlabel('Date')
+plt.ylabel('Value')
+plt.show()
+# Decompose the time series data
+decomposition = seasonal_decompose(data[data.columns[0]], model='additive', period=12)  
+# Assuming a seasonal period of 12 months
+trend = decomposition.trend
+seasonal = decomposition.seasonal
+residual = decomposition.resid
+# Plot the decomposed components
+plt.figure(figsize=(10, 8))
+plt.subplot(411)
+plt.plot(data[data.columns[0]], label='Original')
+plt.legend(loc='best')
+plt.subplot(412)
+plt.plot(trend, label='Trend')
+plt.legend(loc='best')
+plt.subplot(413)
+plt.plot(seasonal, label='Seasonal')
+plt.legend(loc='best')
+plt.subplot(414)
+plt.plot(residual, label='Residual')
+plt.legend(loc='best')
+plt.tight_layout()
+# Check for stationarity using Augmented Dickey-Fuller test
+adf_result = adfuller(data[data.columns[0]])
+print('ADF Statistic:', adf_result[0])
+print('p-value:', adf_result[1])
+print('Critical Values:', adf_result[4])
+# Identify the trend pattern
+plt.show()
